@@ -36,8 +36,6 @@ def parse_args(args):
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
         aliases=['ui'])
 
-    parser_unpack_isosurface.add_argument("-p", "--poscar", required=True,
-                                          type=Structure.from_file)
     parser_unpack_isosurface.add_argument("-i", "--isurf", required=True,
                                           type=str)
     parser_unpack_isosurface.set_defaults(func=unpack_isosurface)
