@@ -1,79 +1,69 @@
-Installation instructions
+Tutorial
 ---------------------------------------------------------
 ## 1. Requirements
   - Python 3.7 or higher
   - pymatgen
   
-## 2. Compress CHGCAR-like file
+## 2. Compress CHGCAR to single isosurface
 - prepare CHGCAR file
 ```
 % ls
-POSCAR CHGCAR
-% cat POSCAR
-Mg1 O1
-1.0
-0.0000000000 2.1046630000 2.1046630000
-2.1046630000 0.0000000000 2.1046630000
-2.1046630000 2.1046630000 0.0000000000
-Mg O
-1 1
-direct
-0.0000000000 0.0000000000 0.0000000000 Mg
-0.5000000000 0.5000000000 0.5000000000 O
+CHGCAR
 ```
-- use fi command 
+- show help
 ```
 % alias chgcomp="python PATH_TO_CHGCOMP/chgcomp/chgcomp/main.py"
 % chgcomp -h 
-usage: main.py [-h] {freeze_isosurface,fi,unpack_isosurface,ui} ...
+usage: main.py [-h]
+               {compress_isosurface,ci,decompress_isosurface,di,compress_isosurfaces,cis,decompress_isosurfaces,dis}
+               ...
 
 positional arguments:
-  {freeze_isosurface,fi,unpack_isosurface,ui}
+  {compress_isosurface,ci,decompress_isosurface,di,compress_isosurfaces,cis,decompress_isosurfaces,dis}
 
 optional arguments:
   -h, --help            show this help message and exit
-% chgcomp fi -h
-usage: main.py freeze_isosurface [-h] -c CHGCAR [-i ILEVEL]
-
-optional arguments:
-  -h, --help            show this help message and exit
-  -c CHGCAR, --chgcar CHGCAR
-  -l LEVEL, --level LEVEL
 ```
-- set isosurface level (e.g., 30% of max value)
+- use ci command (e.g., set isosurface level to 30% of max value) 
 ```
-% chgcomp fi -c CHGCAR -l 0.3  
-% ls # pickle file is dumped
-CHGCAR  isosurface_0.3.pickle  POSCAR
+% chgcomp ci -c CHGCAR -l 0.3  
+% ls  # pickle file is dumped
+CHGCAR  isosurface_0.3.pickle
 ```
 - pickle file size is 1/200 of original CHGCAR file
 ```
 % du -sh *
 8.9M	CHGCAR
-4.0K	POSCAR
 48K	isosurface_0.3.pickle
 ```
 
-## 3. Decompress dumped file
-- use POSCAR and *.pickle file
+## 3. Decompress single isosurface
+- use di command 
 ```
 % ls
-isosurface_0.3.pickle  POSCAR
-```
-- use ui command (do redirect output to file, e.g., CHGCAR_xx)
-```
-% chgcomp ui -h
-usage: main.py unpack_isosurface [-h] -p POSCAR -i ILEVEL
-
-optional arguments:
-  -h, --help            show this help message and exit
-  -p POSCAR, --poscar POSCAR
-  -i ISURF, --isurf ISURF
-% chgcomp ui -p POSCAR -i isosurface_0.3.pickle >| CHGCAR_30
+isosurface_0.3.pickle 
+% chgcomp di -i isosurface_0.3.pickle 
+% ls 
+CHGCAR_300               isosurface_0.3.pickle
 ```
 - open with VESTA
 ```
-% ls 
-CHGCAR_30             POSCAR                isosurface_0.3.pickle
-% open -a VESTA CHGCAR_30
+% open -a VESTA CHGCAR_300
 ```
+
+## 4. Compress/Decompress CHGCAR to 7 sliced isosurfaces
+```
+% chgcomp cis -c CHGCAR 
+% ls  # pickle file is dumped
+CHGCAR  isosurface_slices.pickle  POSCAR
+% du -sh *
+8.9M	CHGCAR
+4.0K	POSCAR
+152K	isosurface_slices.pickle
+% chgcomp dis -i isosurface_slices.pickle
+% ls
+CHGCAR                   CHGCAR_250               CHGCAR_500               CHGCAR_750               isosurface_slices.pickle
+CHGCAR_125               CHGCAR_375               CHGCAR_625               CHGCAR_875
+% open -a VESTA CHGCAR_*
+```
+
