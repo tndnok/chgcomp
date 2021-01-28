@@ -18,12 +18,12 @@ def compress_isosurface(args):
     bin_stream = int(stream, 2)
 
     with open(f'isosurface_{args.level}.pickle', 'wb') as f:
-        pickle.dump((c.structure, bin_stream, args.level), f, protocol=4)
+        pickle.dump((c.structure, bin_stream), f, protocol=4)
 
 
 def decompress_isosurface(args):
     with open(f'{args.isurf}', 'rb') as f:
-        s, b, level = pickle.load(f)
+        s, b = pickle.load(f)
 
     bin_stream = bin(b)
     stream, ngx, ngy, ngz = bin_stream[2:-30], bin_stream[-30:-20], bin_stream[-20:-10], bin_stream[-10:]
