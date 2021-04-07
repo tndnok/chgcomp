@@ -10,13 +10,12 @@ from pymatgen.io.vasp import Chgcar
 def compress_isosurface(args):
     c: Chgcar = args.chgcar
     raw_data = c.data["total"]
-    ngx, ngy, ngz = [bin(g)[2:].zfill(10) for g in c.dim]
     c_max = c.data['total'].max()
     mask = raw_data > float(args.level * c_max)
     bit_array = mask.astype(int).T.flatten()
 
     s = c.structure
-    result = s.to("POSCAR") + f"{int(ngx, 2)} {int(ngy, 2)} {int(ngz, 2)} \n"
+    result = s.to("POSCAR") + f"{c.dim[0]} {c.dim[1]} {c.dim[2]}" + "\n"
 
     for bit in bit_array:
         result += str(bit)
